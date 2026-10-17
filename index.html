@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Você conhece sua futura namorada? 💗</title>
+    <style>
+        *{box-sizing:border-box}
+        body{margin:0;background:linear-gradient(145deg,#fce7f3,#dbeafe,#f5d0fe);font-family:Arial,sans-serif;color:#38233b;padding:20px}
+        main{max-width:680px;margin:20px auto;background:#ffffffed;padding:25px;border-radius:24px;box-shadow:0 10px 40px #69436b20}
+        h1{text-align:center;color:#b83280;font-size:27px}
+        .sub{text-align:center;line-height:1.6}
+        .progress{height:8px;background:#f1d9e9;border-radius:10px;overflow:hidden;margin:20px 0}
+        #bar{height:100%;width:0;background:#c02678;transition:.2s}
+        .question{padding:18px 0;border-bottom:1px solid #f1e3ef}
+        .question p{font-weight:bold;line-height:1.5}
+        label{display:block;padding:12px;margin:8px 0;background:#fff6fb;border:1px solid #f0d5e6;border-radius:12px;cursor:pointer}
+        label:has(input:checked){background:#fce7f3;border-color:#c02678}
+        input{accent-color:#be185d;margin-right:8px}
+        button{width:100%;padding:15px;border:0;border-radius:14px;background:#be185d;color:white;font-size:16px;font-weight:bold;cursor:pointer;margin-top:18px}
+        #result{display:none;text-align:center;padding:20px 0}
+        .score{font-size:44px;color:#be185d;font-weight:bold}
+        .small{font-size:13px;color:#755f77}
+    </style>
+</head>
+<body>
+<main>
+    <h1>Você conhece sua futura namorada? 💗</h1>
+    <p class="sub">35 perguntas sobre os gostos, as manias e o coração da sua futura namorada. Escolha uma alternativa por pergunta e descubra sua pontuação! ❤️‍🔥</p>
+    <div class="progress"><div id="bar"></div></div>
+    <div id="quiz"></div>
+    <button id="finish" onclick="finishQuiz()">Descobrir meu resultado 💌</button>
+    <div id="result">
+        <h2>Seu resultado 💗</h2>
+        <div class="score" id="score"></div>
+        <h3 id="headline"></h3>
+        <p id="message"></p>
+        <p id="details"></p>
+        <button onclick="location.reload()">Tentar novamente ↻</button>
+    </div>
+    <p class="small">Feito com carinho, especialmente para vocês duas. 💕</p>
+</main>
+<script>
+const questions = [
+    ["Qual é a cor favorita dela?",["Roxo","Azul","Preto","Rosa"],1],
+    ["Qual é a comida favorita dela?",["Pizza","Lasanha","Macarrão à bolonhesa","Hambúrguer"],2],
+    ["Qual é a bebida favorita dela?",["Café","Monster","Refrigerante","Suco de uva"],1],
+    ["Qual é o doce favorito dela?",["Chocolate","Brigadeiro","Doce de gelatina","Pudim"],2],
+    ["Qual é a fruta favorita dela?",["Morango","Uva","Manga","Melancia"],1],
+    ["Qual é a flor favorita dela?",["Rosas vermelhas","Girassóis","Tulipas azuis","Orquídeas"],2],
+    ["Qual é o animal favorito dela?",["Gato","Cachorro","Coelho","Cavalo"],1],
+    ["Qual série ela adora?",["The Vampire Diaries","Stranger Things","Supernatural","The Walking Dead"],2],
+    ["Qual é o livro favorito dela?",["A Culpa é das Estrelas","O Pequeno Príncipe","Dom Casmurro","Harry Potter"],1],
+    ["Qual música ela escolheu como favorita?",["Evidências","Sociedade dos Nerds Psicóticos, do Kamaitachi","Velha Infância","Trevo"],1],
+    ["O que mais irrita essa garota?",["Acordar cedo","Gastar dinheiro com comida ruim","Perder o celular","Chuva inesperada"],1],
+    ["O que mais faz ela rir?",["Memes de gatos","Vídeos de dança","Vocabulário nordestino","Pegadinhas"],2],
+    ["O que ela costuma fazer quando fica triste?",["Sair para caminhar","Dormir","Cozinhar","Ouvir rádio"],1],
+    ["Qual é o maior sonho dela?",["Viajar para Paris","Conhecer Jensen Ackles, o Dean Winchester","Ter uma banda","Morar numa praia"],1],
+    ["Qual é o maior medo dela?",["Altura","Insetos","Casar, ter filhos e depois eles terem mães separadas","Ficar sem internet"],2],
+    ["Ela prefere sair ou ficar em casa?",["Sair sempre","Ficar em casa","Depende apenas do clima","Viajar toda semana"],1],
+    ["Ela prefere mensagens ou ligações?",["Só mensagens","Só ligações","Ambos","Nenhum dos dois"],2],
+    ["Qual é uma mania dela?",["Roer as unhas","Mudar o cabelo constantemente","Comprar sapatos","Falar dormindo"],1],
+    ["Que presente mais a emocionaria?",["Um celular novo","Um perfume caro","Algo feito à mão","Uma roupa de marca"],2],
+    ["Qual é o lugar favorito dela para ficar em paz?",["Praia","Beira de um rio","Shopping","Biblioteca"],1],
+    ["Onde as duas se conheceram?",["Na escola","Pelo Instagram","Na internet, pelo Litmatch","Por amigos em comum"],2],
+    ["Qual foi a primeira impressão dela sobre a futura namorada?",["Uma menina tímida e séria","Uma menina legal, divertida e com personalidade própria","Uma menina distante","Uma menina muito quieta"],1],
+    ["O que mais chamou a atenção dela na futura namorada?",["O sorriso","A voz","Os olhos","O cabelo"],2],
+    ["Qual é a lembrança favorita dela com a futura namorada?",["O primeiro presente","As inúmeras mensagens lembrando-a de como ela é incrível","Uma viagem","Uma chamada de vídeo"],1],
+    ["Qual apelido carinhoso ela mais gosta de receber?",["Princesa","Vida","Meu bem","Amorzinho"],2],
+    ["O que a futura namorada faz que a deixa toda boba?",["Canta para ela","Elogia seus poemas","Manda memes","Faz cócegas"],1],
+    ["Como ela prefere demonstrar amor?",["Cozinhar e dançar","Dar presentes e escrever poemas","Fazer viagens","Postar fotos"],1],
+    ["O que ela mais valoriza num relacionamento?",["Presentes caros","Companheirismo","Popularidade","Surpresas constantes"],1],
+    ["Como seria o encontro perfeito dela?",["Cinema à tarde","Jantar em um restaurante","Beira de um lago ao pôr do sol","Parque de diversões"],2],
+    ["O que ela sonha viver com a futura namorada?",["Uma viagem específica","Um casamento imediato","Tudo o que puder viver com ela","Uma festa inesquecível"],2],
+    ["Qual é o aniversário da futura namorada dela?",["22/09","18/08","12/12","23/09"],1],
+    ["Qual é o aniversário dela?",["18/08","22/09","23/09","08/12"],1],
+    ["O que a faz sentir amada?",["Presentes caros","Atenção e prioridade","Muitas curtidas","Declarações públicas apenas"],1],
+    ["Sobre o que ela poderia conversar por horas?",["Moda e maquiagem","Supernatural ou livros","Esportes e carros","Culinária e viagens"],1],
+    ["Qual lembrança da infância é importante para ela?",["As férias na praia","Todos os aniversários da avó","O primeiro dia de aula","Uma viagem de família"],1]
+];
+
+const quiz=document.getElementById("quiz");
+questions.forEach((q,i)=>{
+    const section=document.createElement("section");
+    section.className="question";
+    section.innerHTML=`<p>${i+1}. ${q[0]}</p>`+ q[1].map((option,j)=>`<label><input type="radio" name="q${i}" value="${j}">${String.fromCharCode(65+j)}. ${option}</label>`).join("");
+    quiz.appendChild(section);
+});
+
+quiz.addEventListener("change",()=>{
+    const answered=questions.filter((_,i)=>document.querySelector(`input[name="q${i}"]:checked`)).length;
+    document.getElementById("bar").style.width=(answered/questions.length*100)+"%";
+});
+
+function finishQuiz(){
+    const unanswered=questions.filter((_,i)=>!document.querySelector(`input[name="q${i}"]:checked`)).length;
+    if(unanswered){alert(`Faltam ${unanswered} pergunta(s)! Responda todas para descobrir seu resultado. 💗`);return;}
+    let correct=0;
+    questions.forEach((q,i)=>{
+        if(Number(document.querySelector(`input[name="q${i}"]:checked`).value)===q[2])correct++;
+    });
+    const percent=Math.round(correct/questions.length*100);
+    let headline,message;
+    if(percent===100){
+        headline="Gabaritou! Dona do coração dela! 👑";
+        message="Você conhece cada detalhe dela! Agora só falta continuar descobrindo novas versões dessa pessoa que você ama. 💗";
+    }else if(percent>=80){
+        headline="Você conhece muito bem sua futura namorada! ❤️‍🔥";
+        message="Você presta atenção nos detalhes e isso é precioso. Ainda existem pequenas curiosidades esperando para serem descobertas!";
+    }else if(percent>=60){
+        headline="Atenta, mas com espaço para descobrir mais! 💌";
+        message="Você já conhece bastante dela! Que tal usar as perguntas que errou para conversar e descobrir histórias novas?";
+    }else if(percent>=40){
+        headline="Ainda temos muito para descobrir! 🌷";
+        message="O amor também é curiosidade. Aproveitem para conversar sobre os gostos, sonhos e pequenas manias uma da outra.";
+    }else{
+        headline="Começou a investigação amorosa! 🔎💗";
+        message="Não desanime! Este quiz é um convite para conhecer melhor quem ela é. Pergunte, escute e descubra cada detalhe com carinho.";
+    }
+    document.getElementById("quiz").style.display="none";
+    document.getElementById("finish").style.display="none";
+    document.getElementById("result").style.display="block";
+    document.getElementById("score").textContent=percent+"%";
+    document.getElementById("headline").textContent=headline;
+    document.getElementById("message").textContent=message;
+    document.getElementById("details").textContent=`Você acertou ${correct} de ${questions.length} perguntas. 💕`;
+    window.scrollTo({top:0,behavior:"smooth"});
+}
+</script>
+</body>
+  </html>
+  
